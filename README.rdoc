@@ -1,0 +1,11 @@
+= boxerino
+
+Boxerino is a tool to assist in managing vagrant boxes in a self hosted repository.
+Its main purpose is to edit the .json file that lists all available versions. You
+can upload, list, and delete boxes from your repo.
+
+The directory structure ist currently limited to what we use at CORE4 but I am happy
+to help you if you want to use it.
+
+:include:boxerino.rdoc
+

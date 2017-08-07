@@ -1,0 +1,75 @@
+== boxerino - Manage vagrant boxes local and remote via http/ssh
+
+v0.1.0
+
+=== Global Options
+=== -p|--box-path path
+
+path to box directory on server
+
+[Default Value] /srv/boxes
+
+
+=== -s|--ssh-host hostname
+
+ssh hostname to box server
+
+[Default Value] serenity
+
+
+=== --help
+Show this message
+
+
+
+=== -q|--[no-]quiet
+Be quiet about it
+
+
+
+=== --version
+Display the program version
+
+
+
+=== Commands
+==== Command: <tt>delete  box name and version number</tt>
+Delete a specific version from a box
+
+
+==== Command: <tt>help  command</tt>
+Shows a list of commands or help for one command
+
+Gets help for the application or its commands. Can also list the commands in a way helpful to creating a bash-style completion function
+===== Options
+===== -c
+List commands one per line, to assist with shell completion
+
+
+
+==== Command: <tt>list </tt>
+List available boxes
+
+
+===== Options
+===== --[no-]versions
+List all avalable versions
+
+
+
+==== Command: <tt>upload  file to upload and version number</tt>
+Upload a box file
+
+
+===== Options
+===== -f|--file file
+
+Specify filename directly
+
+[Default Value] package.box
+
+
+==== Command: <tt>verify  box name</tt>
+verifies a configuration file
+
+

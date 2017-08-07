@@ -1,0 +1,105 @@
+#!/usr/bin/env ruby
+require 'gli'
+require 'boxerino'
+require 'pp'
+
+include GLI::App
+
+program_desc 'Manage vagrant boxes local and remote via http/ssh'
+
+version Boxerino::VERSION
+
+subcommand_option_handling :normal
+arguments :strict
+
+desc 'Be quiet about it'
+switch [:q,:quiet]
+
+desc 'ssh hostname to box server'
+default_value 'serenity'
+arg_name 'hostname'
+flag [:s, :'ssh-host']
+
+desc 'path to box directory on server'
+default_value '/srv/boxes'
+arg_name 'path'
+flag [:p, :'box-path']
+
+desc 'List available boxes'
+#arg_name ''
+command :list do |c|
+  c.desc 'List all avalable versions'
+  c.switch [:versions]
+
+  c.action do |global_options,options,_args|
+    puts @host.list(options[:versions]).join("\n")
+  end
+end
+
+desc 'Upload a box file'
+arg_name 'file to upload and version number'
+command :upload do |c|
+  c.desc 'Specify filename directly'
+  c.default_value 'package.box'
+  c.arg_name 'file'
+  c.flag [:f, :file]
+
+  c.action do |_global_options,options,args|
+    raise 'You need to supply the box name and a version number' if args.size < 2
+    box_name = args[0]
+    version = args[1]
+    box = Boxerino::Box.new(File.absolute_path(options[:file]))
+    box.name = box_name
+    box.version = version
+    @host.upload(box)
+  end
+end
+
+desc 'Delete a specific version from a box'
+arg_name 'box name and version number'
+command :delete do |c|
+  c.action do |_global_options,_options,args|
+    raise 'You need to supply the box name and a version number' if args.size < 2
+    box_name = args[0]
+    version = args[1]
+    config = @host.config(box_name)
+    config.delete(version)
+    @host.update_config(config)
+    @host.delete(config.name, version)
+  end
+end
+
+desc 'verifies a configuration file'
+arg_name 'box name'
+command :verify do |c|
+  c.action do |_global_options,_options,args|
+    raise 'You need to supply the box name' if args.size == 0
+    box_name = args.first
+    config = @host.config(box_name)
+    config.versions.map(&:filename).each {|x| puts x}
+  end
+end
+
+pre do |global,_command,_options,_args|
+  # Pre logic here
+  # Return true to proceed; false to abort and not call the
+  # chosen command
+  # Use skips_pre before a command to skip this block
+  # on that command only
+  @host = Boxerino::SshHost.new(global['ssh-host'], global['box-path'])
+  true
+end
+
+post do |global,command,options,args|
+  # Post logic here
+  # Use skips_post before a command to skip this
+  # block on that command only
+end
+
+on_error do |exception|
+  # Error logic here
+  # return false to skip default error handling
+  true
+end
+
+exit run(ARGV)
