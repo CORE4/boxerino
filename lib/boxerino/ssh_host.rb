@@ -41,7 +41,9 @@ module Boxerino
       @shell.run "cat #{name}/#{name.split('/').last}.json"
       json = @shell.last_output.join("\n")
       raise "Cannot load box configuration for '#{name}'" if json.empty?
-      Boxerino::Configuration.new(json)
+      config = Boxerino::Configuration.new(json)
+      config.internal = true
+      config
     end
 
     def delete(name, version)
@@ -58,7 +60,8 @@ module Boxerino
 
     def update_config(config)
       File.open('/tmp/boxerino_box_config.tmp', 'w') { |f| f.puts config.to_json }
-      system "scp -q /tmp/boxerino_box_config.tmp #{@host}:#{@path}/#{config.name}/#{config.name}.json"
+      path = "#{@path}#{config.internal ? '/internal' : ''}/#{config.name}/#{config.name}.json"
+      system "scp -q /tmp/boxerino_box_config.tmp #{@host}:#{path}"
     end
   end
 end

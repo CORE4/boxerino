@@ -3,7 +3,7 @@ require 'json'
 module Boxerino
   # Represents box configuration data
   class Configuration
-    attr_accessor :data
+    attr_accessor :data, :internal
 
     def initialize(data = '{}')
       @data = JSON.parse(data)
@@ -46,7 +46,7 @@ module Boxerino
     end
 
     def <<(box)
-      raise 'Box name does not match this configuration' if box.name != name
+      raise 'Box name does not match this configuration' if box.name.split('/').last != name
       raise 'Box configuration is incomplete' unless box.complete?
       box.version = next_valid_version(box.version)
       @versions << box
