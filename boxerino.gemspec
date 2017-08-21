@@ -10,13 +10,9 @@ spec = Gem::Specification.new do |s|
   s.summary = 'A description of your project'
   s.files = `git ls-files`.split("\n")
   s.require_paths << 'lib'
-  s.has_rdoc = true
-  s.extra_rdoc_files = %w(README.rdoc boxerino.rdoc)
-  s.rdoc_options << '--title' << 'boxerino' << '--main' << 'README.rdoc' << '-ri'
   s.bindir = 'bin'
   s.executables << 'boxerino'
   s.add_development_dependency('rake')
-  s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')
 
   s.add_runtime_dependency('gli','2.16.0')
