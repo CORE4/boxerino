@@ -42,7 +42,7 @@ module Boxerino
     end
 
     def filename
-      "#{@name}/#{@name.split('/').last}_#{@version}.box"
+      "#{@name}/#{@name}_#{@version}.box"
     end
 
     def complete?

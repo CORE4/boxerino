@@ -5,9 +5,9 @@ spec = Gem::Specification.new do |s|
   s.version = Boxerino::VERSION
   s.author = 'Gerrit Visscher'
   s.email = 'g.visscher@core4.de'
-  s.homepage = 'http://your.website.com'
+  s.homepage = 'https://core4.de'
   s.platform = Gem::Platform::RUBY
-  s.summary = 'A description of your project'
+  s.summary = 'Vagrant box management tool'
   s.files = `git ls-files`.split("\n")
   s.require_paths << 'lib'
   s.bindir = 'bin'

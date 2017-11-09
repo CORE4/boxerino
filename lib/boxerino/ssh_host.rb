@@ -12,8 +12,7 @@ module Boxerino
     end
 
     def list(all_versions)
-      boxes = public_boxes
-      boxes += internal_boxes.map { |box| "internal/#{box}" }
+      boxes = list_boxes
       box_list = []
       boxes.each do |box|
         if all_versions
@@ -21,46 +20,39 @@ module Boxerino
             box_list << "#{box}, #{box_info.version}"
           end
         else
-          box_list << "#{box}, #{config(box).versions.last.version}"
+          box_list << "#{box}, #{config(box).versions.last.version}" unless config(box).versions.empty?
         end
       end
       box_list
     end
 
-    def public_boxes
+    def list_boxes
       @shell.run 'ls -1'
       @shell.last_output.reject { |item| item == 'internal' }
     end
 
-    def internal_boxes
-      @shell.run 'ls -1 internal'
-      @shell.last_output
-    end
-
     def config(name)
-      @shell.run "cat #{name}/#{name.split('/').last}.json"
+      @shell.run "cat #{name}/#{name}.json"
       json = @shell.last_output.join("\n")
       raise "Cannot load box configuration for '#{name}'" if json.empty?
-      config = Boxerino::Configuration.new(json)
-      config.internal = true
-      config
+      Boxerino::Configuration.new(json)
     end
 
     def delete(name, version)
-      @shell.run "rm #{name}/#{name.split('/').last}_#{version}.box"
+      @shell.run "rm #{name}/#{name}_#{version}.box"
     end
 
     def upload(box)
       box_config = config(box.name)
       box_config << box
-      system "scp -q #{box.url} #{@host}:#{@path}/#{box.name}/#{box.name.split('/').last}_#{box.version}.box"
-      box.url = "#{box_config.base_url}/#{box.name}/#{box.name.split('/').last}_#{box.version}.box"
+      system "scp -q #{box.url} #{@host}:#{@path}/#{box.name}/#{box.name}_#{box.version}.box"
+      box.url = "#{box_config.base_url}/#{box.name}/#{box.name}_#{box.version}.box"
       update_config(box_config)
     end
 
     def update_config(config)
       File.open('/tmp/boxerino_box_config.tmp', 'w') { |f| f.puts config.to_json }
-      path = "#{@path}#{config.internal ? '/internal' : ''}/#{config.name}/#{config.name}.json"
+      path = "#{@path}/#{config.name}/#{config.name}.json"
       system "scp -q /tmp/boxerino_box_config.tmp #{@host}:#{path}"
     end
   end

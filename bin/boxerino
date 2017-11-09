@@ -4,6 +4,8 @@ require 'boxerino'
 require 'pp'
 
 include GLI::App
+# Enable debug mode by setting
+# set -x GLI_DEBUG true
 
 program_desc 'Manage vagrant boxes local and remote via http/ssh'
 
